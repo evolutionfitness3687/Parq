@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>PAR-Q | Evolution Fitness</title>
+<style>
+  :root {
+    --ef-red: #c8102e;
+    --ef-black: #000000;
+    --ef-white: #ffffff;
+    --ef-gold: #cba135;
+    --ef-gray-bg: #f5f5f5;
+    --ef-gray-border: #d9d9d9;
+    --ef-gray-text: #4a4a4a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--ef-gray-bg);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+  }
+  .card {
+    width: 100%;
+    max-width: 560px;
+    background: var(--ef-white);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 24px 20px 32px;
+  }
+  .header { text-align: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 3px solid var(--ef-red); }
+  .brand { color: var(--ef-red); font-weight: 800; letter-spacing: 0.08em; font-size: 14px; margin: 0 0 8px; }
+  .title { color: var(--ef-black); font-size: 20px; line-height: 1.3; margin: 0 0 12px; }
+  .intro { color: var(--ef-gray-text); font-size: 14px; line-height: 1.5; margin: 0; text-align: left; }
+  .section { margin-bottom: 28px; }
+  .section-title { color: var(--ef-black); font-size: 16px; font-weight: 700; margin: 0 0 16px; padding-left: 10px; border-left: 4px solid var(--ef-red); }
+  label.field-label { display: block; font-size: 14px; font-weight: 600; color: var(--ef-black); margin: 16px 0 6px; }
+  input[type="text"], input[type="date"], input[type="tel"], textarea {
+    width: 100%; font-size: 16px; padding: 14px 12px; border: 2px solid var(--ef-gray-border);
+    border-radius: 10px; color: var(--ef-black); background: var(--ef-white); font-family: inherit;
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--ef-red); }
+  input.error, textarea.error { border-color: var(--ef-red); background: #fff5f6; }
+  textarea { resize: vertical; min-height: 90px; }
+  .readonly-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--ef-gray-bg); border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: 14px; color: var(--ef-gray-text); }
+  .readonly-row strong { color: var(--ef-black); text-align: right; }
+  .error-text { color: var(--ef-red); font-size: 13px; margin: 6px 0 0; }
+  .question-block { padding: 16px 0; border-bottom: 1px solid var(--ef-gray-border); }
+  .question-block:last-child { border-bottom: none; }
+  .question-block.error { background: #fff5f6; border-radius: 10px; padding: 16px 10px; }
+  .question-number { color: var(--ef-red); font-weight: 800; }
+  .question-text { font-size: 15px; line-height: 1.5; color: var(--ef-black); margin: 0 0 14px; }
+  .yesno-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .yesno-btn { min-height: 56px; border-radius: 12px; border: 2px solid var(--ef-gray-border); background: var(--ef-white); color: var(--ef-black); font-size: 16px; font-weight: 700; letter-spacing: 0.03em; cursor: pointer; }
+  .yesno-btn:active { transform: scale(0.98); }
+  .yesno-btn.active-yes { background: var(--ef-red); border-color: var(--ef-red); color: var(--ef-white); }
+  .yesno-btn.active-no { background: var(--ef-black); border-color: var(--ef-black); color: var(--ef-white); }
+  .alert-section { background: #fff8ec; border: 1px solid var(--ef-gold); border-radius: 12px; padding: 18px 16px; }
+  .alert-text { font-size: 14px; line-height: 1.5; color: var(--ef-gray-text); margin: 0 0 6px; }
+  .declaration-text { font-size: 14px; line-height: 1.6; color: var(--ef-gray-text); background: var(--ef-gray-bg); border-radius: 10px; padding: 14px; margin: 0 0 16px; }
+  .checkbox-row { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--ef-black); padding: 14px; border: 2px solid var(--ef-gray-border); border-radius: 10px; cursor: pointer; }
+  .checkbox-row.error { border-color: var(--ef-red); background: #fff5f6; }
+  .checkbox-row input { width: 22px; height: 22px; flex-shrink: 0; accent-color: var(--ef-red); margin-top: 1px; }
+  .submit-btn { width: 100%; min-height: 58px; background: var(--ef-red); color: var(--ef-white); border: none; border-radius: 12px; font-size: 17px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; margin-top: 8px; }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .manual-link { display: block; text-align: center; margin-top: 14px; font-size: 13px; color: var(--ef-gray-text); }
+  .manual-link a { color: var(--ef-red); font-weight: 700; text-decoration: none; }
+  .hidden { display: none !important; }
+  .yesno-btn:focus-visible, .submit-btn:focus-visible, .checkbox-row:focus-within { outline: 3px solid var(--ef-gold); outline-offset: 2px; }
+  .site-footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--ef-gray-border); text-align: center; }
+  .footer-address, .footer-whatsapp { font-size: 12px; color: var(--ef-gray-text); margin: 0 0 4px; }
+  .footer-whatsapp { font-weight: 700; color: var(--ef-black); margin-bottom: 10px; }
+  .footer-note { font-size: 11px; color: #8a8a8a; line-height: 1.5; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="card" id="formCard">
+  <form id="parqForm" novalidate>
+    <header class="header">
+      <p class="brand">EVOLUTION FITNESS</p>
+      <h1 class="title">Questionário de Prontidão para Atividade Física — PAR-Q</h1>
+      <p class="intro">
+        Este questionário tem como objetivo identificar possíveis situações de saúde
+        que mereçam atenção antes do início ou da progressão de um programa de
+        exercícios. Responda todas as perguntas com sinceridade. Em caso de dúvida,
+        procure orientação de um profissional de saúde.
+      </p>
+    </header>
+
+    <section class="section">
+      <h2 class="section-title">Dados do aluno</h2>
+
+      <label class="field-label" for="full_name">Nome completo</label>
+      <input type="text" id="full_name" autocomplete="name" placeholder="Digite seu nome" />
+      <p class="error-text hidden" data-error-for="full_name">Informe seu nome completo.</p>
+
+      <label class="field-label" for="birth_date">Data de nascimento</label>
+      <input type="date" id="birth_date" />
+      <p class="error-text hidden" data-error-for="birth_date">Informe sua data de nascimento.</p>
+
+      <label class="field-label" for="phone">Telefone</label>
+      <input type="tel" id="phone" inputmode="numeric" autocomplete="tel" placeholder="(99) 99999-9999" />
+      <p class="error-text hidden" data-error-for="phone">Informe um telefone válido.</p>
+
+      <div class="readonly-row">
+        <span>Data do preenchimento</span>
+        <strong id="todayDisplay"></strong>
+      </div>
+    </section>
+
+    <section class="section" id="questionsSection">
+      <h2 class="section-title">Questionário</h2>
+      <!-- Perguntas inseridas via JS -->
+    </section>
+
+    <section class="section alert-section hidden" id="alertSection">
+      <h2 class="section-title">Se você respondeu SIM a alguma pergunta</h2>
+      <p class="alert-text">
+        Para sua segurança, informe qual(is) pergunta(s) recebeu(ram) resposta
+        &ldquo;SIM&rdquo; e, quando necessário, procure avaliação e liberação de um
+        profissional de saúde antes de iniciar ou aumentar a intensidade dos exercícios.
+      </p>
+      <div class="readonly-row">
+        <span>Pergunta(s) com resposta SIM</span>
+        <strong id="yesQuestionsDisplay">—</strong>
+      </div>
+      <label class="field-label" for="observations">Observações</label>
+      <textarea id="observations" rows="4" placeholder="Se quiser, adicione detalhes para a equipe da Evolution Fitness."></textarea>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Declaração do aluno</h2>
+      <p class="declaration-text">
+        Declaro que respondi às perguntas acima de forma verdadeira e completa e que
+        informarei à equipe da Evolution Fitness caso ocorra qualquer alteração
+        relevante no meu estado de saúde. Compreendo que este questionário não
+        substitui avaliação médica e que devo procurar atendimento profissional
+        quando houver indicação.
+      </p>
+      <div class="readonly-row">
+        <span>Assinatura do aluno (nome completo)</span>
+        <strong id="nameConfirmDisplay">—</strong>
+      </div>
+      <label class="checkbox-row" id="declarationRow">
+        <input type="checkbox" id="declaration_confirmed" />
+        <span>Declaro que as informações acima são verdadeiras.</span>
+      </label>
+      <p class="error-text hidden" data-error-for="declaration_confirmed">Confirme a declaração antes de enviar.</p>
+    </section>
+
+    <button type="submit" class="submit-btn" id="submitBtn">ENVIAR PAR-Q</button>
+    <span class="manual-link" id="manualLinkWrap" style="display:none;">
+      Se o WhatsApp não abriu, <a id="manualLink" href="#" target="_blank" rel="noopener">toque aqui</a>.
+    </span>
+  </form>
+
+  <footer class="site-footer">
+    <p class="footer-address">
+      Evolution Fitness &bull; Rua Dr. Valmir Peçanha, 50 — Salas 206-208 — Centro — Três Rios/RJ
+    </p>
+    <p class="footer-whatsapp">WhatsApp: (24) 98143-3386</p>
+    <p class="footer-note">
+      Documento para triagem pré-participação em atividade física.<br />
+      Este formulário preenchido deve ser anexado junto aos documentos do aluno.
+    </p>
+  </footer>
+</div>
+
+<script>
+  // ============================================================
+  // Número de WhatsApp da Evolution Fitness (formato internacional,
+  // só dígitos: 55 + DDD + número).
+  // ============================================================
+  const WHATSAPP_NUMBER = "5524981433386";
+
+  // As 7 perguntas oficiais do PAR-Q — texto fiel ao documento
+  // fornecido pela Evolution Fitness. Não alterar sem necessidade.
+  const QUESTIONS = [
+    { key: "question_1", number: 1, text: "Alguma vez um médico lhe disse que você possui algum problema cardíaco e que só deveria realizar atividade física recomendada por um médico?" },
+    { key: "question_2", number: 2, text: "Você sente dor no peito quando realiza atividade física?" },
+    { key: "question_3", number: 3, text: "No último mês, você sentiu dor no peito quando não estava realizando atividade física?" },
+    { key: "question_4", number: 4, text: "Você perde o equilíbrio por causa de tontura ou já perdeu a consciência?" },
+    { key: "question_5", number: 5, text: "Você possui algum problema ósseo ou articular que poderia piorar com a prática de atividade física?" },
+    { key: "question_6", number: 6, text: "Atualmente, algum médico está prescrevendo medicamentos para pressão arterial ou para algum problema cardíaco?" },
+    { key: "question_7", number: 7, text: "Existe alguma outra razão, não mencionada acima, pela qual você não deveria realizar atividade física?" },
+  ];
+
+  const answers = {}; // { question_1: true/false, ... }
+
+  // Data de hoje exibida (dd/mm/aaaa)
+  document.getElementById("todayDisplay").textContent =
+    new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+  // Monta as perguntas dinamicamente
+  const questionsSection = document.getElementById("questionsSection");
+  QUESTIONS.forEach((q) => {
+    const block = document.createElement("div");
+    block.className = "question-block";
+    block.dataset.questionKey = q.key;
+    block.innerHTML = `
+      <p class="question-text"><span class="question-number">${q.number}.</span> ${q.text}</p>
+      <div class="yesno-group" role="radiogroup" aria-label="Pergunta ${q.number}">
+        <button type="button" class="yesno-btn" data-key="${q.key}" data-value="true">SIM</button>
+        <button type="button" class="yesno-btn" data-key="${q.key}" data-value="false">NÃO</button>
+      </div>
+      <p class="error-text hidden" data-error-for="${q.key}">Responda SIM ou NÃO.</p>
+    `;
+    questionsSection.appendChild(block);
+  });
+
+  // Clique nos botões SIM/NÃO
+  questionsSection.addEventListener("click", (e) => {
+    const btn = e.target.closest(".yesno-btn");
+    if (!btn) return;
+    const key = btn.dataset.key;
+    const value = btn.dataset.value === "true";
+    answers[key] = value;
+
+    const block = btn.closest(".question-block");
+    block.querySelectorAll(".yesno-btn").forEach((b) => b.classList.remove("active-yes", "active-no"));
+    btn.classList.add(value ? "active-yes" : "active-no");
+    block.classList.remove("error");
+    hideError(key);
+
+    updateAlertSection();
+  });
+
+  function updateAlertSection() {
+    const yesKeys = QUESTIONS.filter((q) => answers[q.key] === true);
+    const alertSection = document.getElementById("alertSection");
+    if (yesKeys.length > 0) {
+      alertSection.classList.remove("hidden");
+      document.getElementById("yesQuestionsDisplay").textContent = yesKeys.map((q) => q.number).join(", ");
+    } else {
+      alertSection.classList.add("hidden");
+    }
+  }
+
+  // Máscara de telefone
+  const phoneInput = document.getElementById("phone");
+  phoneInput.addEventListener("input", () => {
+    let digits = phoneInput.value.replace(/\D/g, "").slice(0, 11);
+    if (digits.length > 7) {
+      phoneInput.value = `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+    } else if (digits.length > 2) {
+      phoneInput.value = `(${digits.slice(0,2)}) ${digits.slice(2)}`;
+    } else {
+      phoneInput.value = digits;
+    }
+    hideError("phone");
+  });
+
+  // Atualiza nome exibido na declaração
+  const fullNameInput = document.getElementById("full_name");
+  fullNameInput.addEventListener("input", () => {
+    document.getElementById("nameConfirmDisplay").textContent = fullNameInput.value || "—";
+    hideError("full_name");
+  });
+
+  document.getElementById("birth_date").addEventListener("input", () => hideError("birth_date"));
+
+  const declarationCheckbox = document.getElementById("declaration_confirmed");
+  declarationCheckbox.addEventListener("change", () => {
+    document.getElementById("declarationRow").classList.remove("error");
+    hideError("declaration_confirmed");
+  });
+
+  function showError(key) {
+    const el = document.querySelector(`[data-error-for="${key}"]`);
+    if (el) el.classList.remove("hidden");
+  }
+  function hideError(key) {
+    const el = document.querySelector(`[data-error-for="${key}"]`);
+    if (el) el.classList.add("hidden");
+  }
+
+  function validate() {
+    let valid = true;
+
+    if (!fullNameInput.value.trim()) {
+      showError("full_name"); fullNameInput.classList.add("error"); valid = false;
+    } else fullNameInput.classList.remove("error");
+
+    const birthDateInput = document.getElementById("birth_date");
+    if (!birthDateInput.value.trim()) {
+      showError("birth_date"); birthDateInput.classList.add("error"); valid = false;
+    } else birthDateInput.classList.remove("error");
+
+    const phoneDigits = phoneInput.value.replace(/\D/g, "");
+    if (phoneDigits.length < 10) {
+      showError("phone"); phoneInput.classList.add("error"); valid = false;
+    } else phoneInput.classList.remove("error");
+
+    QUESTIONS.forEach((q) => {
+      const block = document.querySelector(`[data-question-key="${q.key}"]`);
+      if (answers[q.key] === undefined) {
+        showError(q.key); block.classList.add("error"); valid = false;
+      }
+    });
+
+    if (!declarationCheckbox.checked) {
+      showError("declaration_confirmed");
+      document.getElementById("declarationRow").classList.add("error");
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  function formatDateBR(isoDate) {
+    if (!isoDate) return "";
+    const [y, m, d] = isoDate.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  function buildWhatsAppMessage() {
+    const yesQuestions = QUESTIONS.filter((q) => answers[q.key] === true);
+    const observations = document.getElementById("observations").value.trim();
+
+    let lines = [];
+    lines.push("*PAR-Q — Evolution Fitness*");
+    lines.push("");
+    lines.push(`*Nome:* ${fullNameInput.value.trim()}`);
+    lines.push(`*Data de nascimento:* ${formatDateBR(document.getElementById("birth_date").value)}`);
+    lines.push(`*Telefone:* ${phoneInput.value.trim()}`);
+    lines.push(`*Data do preenchimento:* ${document.getElementById("todayDisplay").textContent}`);
+    lines.push("");
+    lines.push("*Respostas:*");
+    QUESTIONS.forEach((q) => {
+      lines.push(`${q.number}. ${q.text}`);
+      lines.push(`Resposta: ${answers[q.key] ? "SIM" : "NÃO"}`);
+    });
+
+    if (yesQuestions.length > 0) {
+      lines.push("");
+      lines.push(`*Pergunta(s) com resposta SIM:* ${yesQuestions.map((q) => q.number).join(", ")}`);
+      lines.push(`*Observações:* ${observations || "—"}`);
+    }
+
+    lines.push("");
+    lines.push("*Declaração:* Confirmo que as informações acima são verdadeiras.");
+
+    return lines.join("\n");
+  }
+
+  document.getElementById("parqForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!validate()) {
+      const firstError = document.querySelector(".error, .question-block.error");
+      if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    const message = buildWhatsAppMessage();
+    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+    // Mostra o link manual como reforço, caso o redirecionamento automático
+    // seja bloqueado pelo navegador.
+    const manualLink = document.getElementById("manualLink");
+    manualLink.href = waUrl;
+    document.getElementById("manualLinkWrap").style.display = "block";
+
+    window.location.href = waUrl;
+  });
+</script>
+
+</body>
+</html>
